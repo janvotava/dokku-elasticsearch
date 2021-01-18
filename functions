@@ -80,7 +80,15 @@ service_create_container() {
   else
     dokku_log_info2 "Extracting config files"
     local TEMP_DOCKER_CONTAINER_ID=$(docker create "$PLUGIN_IMAGE:$PLUGIN_IMAGE_VERSION")
+
     docker cp "${TEMP_DOCKER_CONTAINER_ID}:/usr/share/elasticsearch/config/" "$SERVICE_HOST_ROOT/"
+
+    if [[ "$ELASTICSEARCH_MAJOR_VERSION" -eq "7" ]]; then
+      echo 'node.name: node-1' >> $SERVICE_HOST_ROOT/$PLUGIN_CONFIG_SUFFIX/elasticsearch.yml
+      echo 'cluster.initial_master_nodes:' >> $SERVICE_HOST_ROOT/$PLUGIN_CONFIG_SUFFIX/elasticsearch.yml
+      echo '  - node-1' >> $SERVICE_HOST_ROOT/$PLUGIN_CONFIG_SUFFIX/elasticsearch.yml
+    fi
+
     if [[ "$ELASTICSEARCH_MAJOR_VERSION" -eq "5" ]]; then
       docker cp "${TEMP_DOCKER_CONTAINER_ID}:/etc/elasticsearch/jvm.options" - | tar -x -C "$SERVICE_HOST_ROOT/$PLUGIN_CONFIG_SUFFIX"
     fi
