@@ -89,6 +89,10 @@ service_create_container() {
       echo '  - node-1' >> $SERVICE_HOST_ROOT/$PLUGIN_CONFIG_SUFFIX/elasticsearch.yml
     fi
 
+    echo 'path:' >> $SERVICE_HOST_ROOT/$PLUGIN_CONFIG_SUFFIX/elasticsearch.yml
+    echo '  repo:' >> $SERVICE_HOST_ROOT/$PLUGIN_CONFIG_SUFFIX/elasticsearch.yml
+    echo '    - /usr/share/elasticsearch/data/backups' >> $SERVICE_HOST_ROOT/$PLUGIN_CONFIG_SUFFIX/elasticsearch.yml
+
     if [[ "$ELASTICSEARCH_MAJOR_VERSION" -eq "5" ]]; then
       docker cp "${TEMP_DOCKER_CONTAINER_ID}:/etc/elasticsearch/jvm.options" - | tar -x -C "$SERVICE_HOST_ROOT/$PLUGIN_CONFIG_SUFFIX"
     fi
